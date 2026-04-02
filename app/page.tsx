@@ -145,11 +145,7 @@ const quadrants: Record<string, Quadrant> = {
   },
 };
 
-function drawCompass(
-  canvas: HTMLCanvasElement,
-  xNorm: number,
-  yNorm: number
-) {
+function drawCompass(canvas: HTMLCanvasElement, xNorm: number, yNorm: number) {
   const ctx = canvas.getContext("2d")!;
   const W = canvas.width;
   const H = canvas.height;
@@ -295,134 +291,187 @@ export default function Home() {
   const q = questions[current];
 
   return (
-    <div className="container">
+    <div className="max-w-[760px] mx-auto px-6 py-12">
+
+      {/* INTRO */}
       {screen === "intro" && (
-        <div className="intro-screen">
-          <h2>
+        <div>
+          <h2 className="font-serif text-[2rem] font-normal leading-[1.3] mb-5">
             Where do you actually
             <br />
             <em>sit</em> on questions of the sacred?
           </h2>
-          <p>
+          <p className="text-base leading-[1.7] text-[#333] mb-4 max-w-[580px]">
             Most belief surveys ask whether you&apos;re religious or not. This one
             tries to ask something more interesting: <em>how</em> you relate to
             spiritual claims, and <em>what</em> you think the transcendent is, if
             anything.
           </p>
-          <p>
+          <p className="text-base leading-[1.7] text-[#333] mb-4 max-w-[580px]">
             Ten questions. No right answers. The result is a position on a
             two-axis map, not a score.
           </p>
-          <div className="meta">
-            10 questions &nbsp;·&nbsp; ~4 minutes &nbsp;·&nbsp; No data
-            collected
+          <div className="text-[0.82rem] text-muted border-t border-border pt-4 mt-6 mb-8">
+            10 questions &nbsp;·&nbsp; ~4 minutes &nbsp;·&nbsp; No data collected
           </div>
-          <button className="btn" onClick={startQuiz}>
+          <button
+            className="bg-primary text-bg font-sans text-[0.9rem] font-semibold tracking-[0.06em] uppercase px-7 py-3 cursor-pointer border-0 transition-colors hover:bg-accent"
+            onClick={startQuiz}
+          >
             Begin the test
           </button>
         </div>
       )}
 
+      {/* QUIZ */}
       {screen === "quiz" && (
         <div>
-          <div className="progress-bar">
+          <div className="h-[3px] bg-border mb-12">
             <div
-              className="progress-fill"
+              className="h-full bg-primary transition-all duration-300"
               style={{ width: `${(current / questions.length) * 100}%` }}
             />
           </div>
-          <div className="question-counter">
+          <div className="text-[0.75rem] tracking-[0.1em] uppercase text-muted mb-3">
             Question {current + 1} of {questions.length}
           </div>
-          <div className="question-text">{q.text}</div>
-          <div className={`options${showError ? " error" : ""}`}>
+          <div className="font-serif text-[1.35rem] font-normal leading-[1.4] mb-9">
+            {q.text}
+          </div>
+          <div
+            className={`flex flex-col border border-border${showError ? " outline outline-2 outline-dot" : ""}`}
+          >
             {q.options.map((opt, i) => (
               <div
                 key={i}
-                className={`option${answers[current] === i ? " selected" : ""}`}
                 onClick={() => selectOption(i)}
+                className={`px-5 py-4 cursor-pointer border-b border-border last:border-b-0 text-[0.95rem] leading-[1.4] flex items-start gap-[14px] transition-colors${
+                  answers[current] === i
+                    ? " bg-primary text-bg"
+                    : " bg-white text-primary hover:bg-accent-light"
+                }`}
               >
-                <span className="option-letter">{letters[i]}</span>
+                <span className="text-[0.75rem] font-semibold tracking-[0.08em] uppercase opacity-50 mt-0.5 shrink-0">
+                  {letters[i]}
+                </span>
                 <span>{opt.text}</span>
               </div>
             ))}
           </div>
-          <div className="nav-row">
+          <div className="flex justify-between items-center mt-8">
             <button
-              className="btn-ghost"
               onClick={goBack}
               disabled={current === 0}
+              className="bg-transparent border border-border text-primary font-sans text-[0.85rem] font-semibold tracking-[0.06em] uppercase px-5 py-[10px] cursor-pointer transition-colors hover:border-primary disabled:opacity-30 disabled:cursor-default"
             >
               ← Back
             </button>
-            <button className="btn" onClick={goNext}>
+            <button
+              onClick={goNext}
+              className="bg-primary text-bg font-sans text-[0.9rem] font-semibold tracking-[0.06em] uppercase px-7 py-3 cursor-pointer border-0 transition-colors hover:bg-accent"
+            >
               {current === questions.length - 1 ? "See results" : "Next →"}
             </button>
           </div>
         </div>
       )}
 
+      {/* RESULTS */}
       {screen === "results" && results && (() => {
         const quad = quadrants[results.quadKey];
         const xPct = ((results.xNorm + 1) / 2) * 100;
         const yPct = ((results.yNorm + 1) / 2) * 100;
         return (
           <div>
-            <div className="results-title">Your position</div>
-            <div className="results-subtitle">Based on your responses</div>
+            <div className="font-serif text-[1.6rem] font-normal mb-2">
+              Your position
+            </div>
+            <div className="text-[0.85rem] text-muted tracking-[0.06em] uppercase mb-10">
+              Based on your responses
+            </div>
 
-            <div className="compass-wrap">
-              <div className="compass-container">
-                <div className="axis-label">Personal</div>
-                <div className="compass-row">
-                  <div className="axis-label-side">Literal</div>
+            <div className="flex gap-10 items-start flex-wrap">
+              {/* Compass */}
+              <div className="shrink-0">
+                <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted font-semibold text-center mb-[6px]">
+                  Personal
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted font-semibold [writing-mode:vertical-rl] w-4">
+                    Literal
+                  </div>
                   <canvas
                     ref={canvasRef}
-                    className="compass-canvas"
                     width={300}
                     height={300}
+                    className="block border border-border"
                   />
-                  <div className="axis-label-side right">Mythic</div>
+                  <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted font-semibold [writing-mode:vertical-rl] rotate-180 w-4">
+                    Mythic
+                  </div>
                 </div>
-                <div className="axis-label bottom">Impersonal</div>
+                <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted font-semibold text-center mt-[6px]">
+                  Impersonal
+                </div>
               </div>
 
-              <div className="quadrant-info">
-                <div className="quadrant-name">{quad.name}</div>
-                <div className="quadrant-tag">{quad.tag}</div>
-                <div className="quadrant-desc">{quad.desc}</div>
+              {/* Quadrant info */}
+              <div className="flex-1 min-w-[220px]">
+                <div className="font-serif text-[1.3rem] font-bold mb-[6px]">
+                  {quad.name}
+                </div>
+                <div className="text-[0.75rem] tracking-[0.1em] uppercase text-muted mb-4">
+                  {quad.tag}
+                </div>
+                <div className="text-[0.95rem] leading-[1.7] text-[#333] mb-4">
+                  {quad.desc}
+                </div>
                 <div
-                  className="quadrant-examples"
+                  className="text-[0.8rem] text-muted border-t border-border pt-3 leading-[1.6] [&_strong]:text-primary [&_strong]:font-semibold"
                   dangerouslySetInnerHTML={{ __html: quad.examples }}
                 />
               </div>
             </div>
 
-            <div className="scores-row">
-              <div className="score-item">
-                <div className="score-label">Literal ← → Mythic</div>
-                <div className="score-track">
-                  <div className="score-fill" style={{ width: `${xPct}%` }} />
+            {/* Score bars */}
+            <div className="flex gap-8 mt-8 border-t border-border pt-6 flex-wrap">
+              <div className="flex-1 min-w-[160px]">
+                <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted mb-[6px]">
+                  Literal ← → Mythic
                 </div>
-                <div className="score-ends">
+                <div className="h-[6px] bg-border mb-[6px] relative">
+                  <div
+                    className="absolute h-full bg-primary"
+                    style={{ width: `${xPct}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[0.72rem] text-muted">
                   <span>Literal</span>
                   <span>Mythic</span>
                 </div>
               </div>
-              <div className="score-item">
-                <div className="score-label">Personal ← → Impersonal</div>
-                <div className="score-track">
-                  <div className="score-fill" style={{ width: `${yPct}%` }} />
+              <div className="flex-1 min-w-[160px]">
+                <div className="text-[0.72rem] tracking-[0.1em] uppercase text-muted mb-[6px]">
+                  Personal ← → Impersonal
                 </div>
-                <div className="score-ends">
+                <div className="h-[6px] bg-border mb-[6px] relative">
+                  <div
+                    className="absolute h-full bg-primary"
+                    style={{ width: `${yPct}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[0.72rem] text-muted">
                   <span>Personal</span>
                   <span>Impersonal</span>
                 </div>
               </div>
             </div>
 
-            <div className="retake-row">
-              <button className="btn-ghost" onClick={retake}>
+            <div className="mt-10 border-t border-border pt-6">
+              <button
+                onClick={retake}
+                className="bg-transparent border border-border text-primary font-sans text-[0.85rem] font-semibold tracking-[0.06em] uppercase px-5 py-[10px] cursor-pointer transition-colors hover:border-primary"
+              >
                 Retake the test
               </button>
             </div>

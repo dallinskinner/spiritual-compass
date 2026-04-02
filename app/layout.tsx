@@ -6,22 +6,29 @@ export const metadata: Metadata = {
   description: "A mapping of belief — where do you sit on questions of the sacred?",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <header>
-          <h1>The Spiritual Compass</h1>
-          <span>A mapping of belief</span>
+      <body className="bg-bg text-primary font-sans font-light min-h-screen">
+        <header className="border-b-2 border-primary px-10 py-[18px] flex items-baseline gap-6">
+          <h1 className="font-serif text-[1.3rem] font-bold tracking-[0.02em]">
+            The Spiritual Compass
+          </h1>
+          <span className="text-[0.8rem] text-muted tracking-[0.08em] uppercase">
+            A mapping of belief
+          </span>
         </header>
+
         {children}
-        <footer>
+
+        <footer className="border-t border-border px-10 py-4 text-[0.75rem] text-muted mt-20">
           The Spiritual Compass &nbsp;·&nbsp; Inspired by{" "}
-          <a href="https://www.politicalcompass.org" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://www.politicalcompass.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted"
+          >
             The Political Compass
           </a>
         </footer>
